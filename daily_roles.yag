@@ -1,15 +1,22 @@
 {{/*
-===========================================
-YAGPDB Advanced Daily Roles
-Version : 1.0.0
+================================================
+ YAGPDB Advanced Daily Roles
 
-Created by:
-Ethelior on Discord Server GameCentral
+ Version: 1.0.0
 
-License:
-MIT
+ Created by: Ethelior
 
-===========================================
+ Description:
+ Advanced daily reward system for YAGPDB
+ with rarity tiers, pity mechanics,
+ daily streaks and troll events.
+
+ License:
+ MIT License
+
+ Repository:
+ https://github.com/Ethelior/yagpdb-advanced-daily-roles
+================================================
 */}}
 
 {{$cooldownKey := "gc_daily_cooldown"}}

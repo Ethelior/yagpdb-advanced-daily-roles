@@ -23,6 +23,19 @@ Give your Discord community a reason to return every day with random role reward
 
 ---
 
+## 📸 Preview
+
+### 🎁 Daily Reward
+![Daily Reward](screenshots/Daily-reward.jpg)
+
+### 💀 Troll Event
+![Daily Troll](screenshots/Daily-troll.jpg)
+
+### ⏳ Cooldown
+![Cooldown](screenshots/Daily-cooldown.jpg)
+
+---
+
 ## 📋 Requirements
 
 - YAGPDB Discord Bot

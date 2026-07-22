@@ -95,14 +95,3 @@ This project is licensed under the MIT License.
 Created by **Ethelior**
 
 Enjoy!
-
-Roadmap
-[ ] Multiple reward pools
-[ ] Bonus events
-[ ] Seasonal rewards
-[ ] Statistics
-[ ] Multi-language support
-
-
-License
-Released under the MIT License.

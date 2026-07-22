@@ -1,0 +1,264 @@
+{{$cooldownKey := "gc_daily_cooldown"}}
+{{$cd := dbGet .User.ID $cooldownKey}}
+
+{{if $cd}}
+
+{{$seconds := sub $cd.ExpiresAt.Unix currentTime.Unix}}
+
+{{$hours := div $seconds 3600}}
+{{$minutes := div (mod $seconds 3600) 60}}
+{{$secs := mod $seconds 60}}
+
+{{/* Ελλάδα:
+☀️ Καλοκαίρι (τέλος Μαρτίου έως τέλος Οκτωβρίου)
+Καλοκαίρι: Add 10800e9 (+3)
+❄️ Χειμώνας (τέλος Οκτωβρίου έως τέλος Μαρτίου)
+Χειμώνας: Add 7200e9 (+2)
+*/}}
+
+{{$next := ($cd.ExpiresAt.Add 10800e9).Format "02/01/2006 στις 15:04:05"}}
+
+{{sendMessage nil (complexMessage
+"content" .User.Mention
+"embed" (cembed
+"title" "⏳ Daily Cooldown"
+"description" (joinStr ""
+"🎁 Έχεις ήδη πάρει το σημερινό σου **Daily Role**.\n\n"
+"**⏰ Απομένει:**\n"
+"🕒 **" $hours "** ώρες\n"
+"🕑 **" (printf "%.0f" $minutes) "** λεπτά\n"
+"🕐 **" $secs "** δευτερόλεπτα\n\n"
+"📅 **Διαθέσιμο ξανά:**\n"
+"**" $next "**\n\n"
+"🎮 Μόλις λήξει ο χρόνος, χρησιμοποίησε ξανά την εντολή **!daily**."
+)
+"color" 16753920
+"footer" (sdict
+"text" "GameCentral Daily System"
+)
+)
+)}}
+
+{{else}}
+
+{{$common := cslice
+1524022878738059364
+1524023080475824271
+1524023154308157521
+1524023221421211741
+1524023289809338428
+1524023348672331806
+1524023419090243745
+1524023481556271185
+1524023542910423091
+1524023603191087316
+}}
+
+{{$rare := cslice
+1524023670962389012
+1524023731029151906
+1524023791053832366
+1524023863862886420
+1524023920326611144
+1524023979109515304
+}}
+
+{{$epic := cslice
+1396486705074405479
+1524024041932066866
+1524024101738385529
+}}
+
+{{$legendary := cslice
+1524024171917480087
+}}
+
+{{$pityKey := "gc_daily_pity"}}
+{{$pityDB := dbGet .User.ID $pityKey}}
+
+{{$pity := 0}}
+
+{{if $pityDB}}
+{{$pity = $pityDB.Value}}
+{{end}}
+
+{{$pityBonus := div $pity 5}}
+
+
+{{$weekBonus := 0}}
+
+{{$weekday := currentTime.Weekday}}
+
+{{if or (eq $weekday 5) (eq $weekday 6) (eq $weekday 0)}}
+{{$weekBonus = 5}}
+{{end}}
+
+{{$chance := randInt 1 (sub 101 $weekBonus)}}
+
+{{$pool := $common}}
+{{$rarity := "🟢 Common"}}
+
+{{if le $chance 60}}
+
+{{$pool = $common}}
+{{$rarity = "🟢 Common"}}
+
+{{else if le $chance (add 88 $pityBonus)}}
+
+{{$pool = $rare}}
+{{$rarity = "🔵 Rare"}}
+
+{{else if le $chance (add 98 $pityBonus)}}
+
+{{$pool = $epic}}
+{{$rarity = "🟣 Epic"}}
+
+{{dbSet .User.ID $pityKey 0}}
+
+{{else}}
+
+{{$pool = $legendary}}
+{{$rarity = "🟡 Legendary"}}
+
+{{dbSet .User.ID $pityKey 0}}
+
+{{end}}
+
+
+{{$trollChance := randInt 1 101}}
+
+{{$oldRole := "Κανένα Daily Role"}}
+
+{{$oldRoleDB := dbGet .User.ID "gc_last_daily_role"}}
+
+{{if $oldRoleDB}}
+    {{$r := getRole (toInt $oldRoleDB.Value)}}
+    {{if $r}}
+        {{$oldRole = $r.Name}}
+    {{end}}
+{{end}}
+
+{{if le $trollChance 12}}
+
+{{$messages := cslice
+"💀 Ο διανομέας των Daily Roles πήγε για καφέ. Ξαναπέρασε αύριο."
+"🎁 Άνοιξες το κουτί... ήταν άδειο."
+"🤡 Συγχαρητήρια! Κέρδισες... απολύτως τίποτα."
+"🐌 Ο courier έχασε το role σου."
+"🪙 Έπεσε το νόμισμα... και έχασες."
+"👻 Το role εξαφανίστηκε πριν το πάρεις."
+"💣 Έπεσες σε Trap Card!"
+"🎰 Critical Miss!"
+"👑 Ο βασιλιάς κράτησε το role για τον εαυτό του."
+"🦝 Ένα ρακούν έκλεψε το κουτί σου."
+}}
+
+{{dbSetExpire .User.ID $cooldownKey true 86400}}
+
+{{sendMessage nil (complexMessage
+"content" .User.Mention
+"embed" (cembed
+"title" "💀 Daily Troll"
+"description" (joinStr ""
+(index $messages (randInt 0 (len $messages)))
+"\n\n🎭 Το προηγούμενο Daily Role σου ήταν:\n🏅 **"
+$oldRole
+"**"
+)
+"color" 15158332
+"footer" (sdict
+"text" "GameCentral Daily System"
+)
+)
+)}}
+
+{{else}}
+
+{{$newRole := index $pool (randInt 0 (len $pool))}}
+
+
+{{range $common}}
+{{if hasRoleID .}}
+{{removeRoleID .}}
+{{end}}
+{{end}}
+
+{{range $rare}}
+{{if hasRoleID .}}
+{{removeRoleID .}}
+{{end}}
+{{end}}
+
+{{range $epic}}
+{{if hasRoleID .}}
+{{removeRoleID .}}
+{{end}}
+{{end}}
+
+{{range $legendary}}
+{{if hasRoleID .}}
+{{removeRoleID .}}
+{{end}}
+{{end}}
+
+
+{{if ne $rarity "🟣 Epic"}}
+{{if ne $rarity "🟡 Legendary"}}
+{{dbSet .User.ID $pityKey (add $pity 1)}}
+{{end}}
+{{end}}
+
+{{addRoleID $newRole}}
+
+{{dbSet .User.ID "gc_last_daily_role" $newRole}}
+
+{{$streakKey := "gc_daily_streak"}}
+{{$streakDB := dbGet .User.ID $streakKey}}
+
+{{$streak := 0}}
+
+{{if $streakDB}}
+{{$streak = $streakDB.Value}}
+{{end}}
+
+{{$streak = add $streak 1}}
+
+{{dbSet .User.ID $streakKey $streak}}
+
+{{dbSetExpire .User.ID $cooldownKey true 86400}}
+
+
+{{$roleName := (getRole $newRole).Name}}
+
+
+{{sendMessage nil (complexMessage
+"content" (joinStr ""
+.User.Mention
+)
+"embed" (cembed
+"title" "🎁 GameCentral Daily Role"
+"description" (joinStr ""
+"Συγχαρητήρια "
+.User.Mention
+"! 🎮\n\n"
+"Σήμερα κέρδισες:\n"
+"🏅 **"
+$roleName
+"**\n\n"
+"Σπανιότητα: "
+$rarity
+"\n\n🔥 Daily Streak: **"
+$streak
+" ημέρες**"
+"\n\n"
+"⏰ Ξαναδοκίμασε αύριο!"
+)
+"color" 3447003
+"footer" (sdict
+"text" "GameCentral Daily System"
+)
+)
+)}}
+
+{{end}}
+{{end}}

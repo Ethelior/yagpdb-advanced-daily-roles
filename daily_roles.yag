@@ -23,11 +23,11 @@ MIT
 {{$minutes := div (mod $seconds 3600) 60}}
 {{$secs := mod $seconds 60}}
 
-{{/* Ελλάδα:
-☀️ Καλοκαίρι (τέλος Μαρτίου έως τέλος Οκτωβρίου)
-Καλοκαίρι: Add 10800e9 (+3)
-❄️ Χειμώνας (τέλος Οκτωβρίου έως τέλος Μαρτίου)
-Χειμώνας: Add 7200e9 (+2)
+{{/* Greece TimeZone:
+☀️ Summer (end of March until end of October)
+Summer: Add 10800e9 (+3)
+❄️ Winter (end of October until end of March)
+Winter: Add 7200e9 (+2)
 */}}
 
 {{$next := ($cd.ExpiresAt.Add 10800e9).Format "02/01/2006 στις 15:04:05"}}
@@ -37,18 +37,18 @@ MIT
 "embed" (cembed
 "title" "⏳ Daily Cooldown"
 "description" (joinStr ""
-"🎁 Έχεις ήδη πάρει το σημερινό σου **Daily Role**.\n\n"
-"**⏰ Απομένει:**\n"
-"🕒 **" $hours "** ώρες\n"
-"🕑 **" (printf "%.0f" $minutes) "** λεπτά\n"
-"🕐 **" $secs "** δευτερόλεπτα\n\n"
-"📅 **Διαθέσιμο ξανά:**\n"
+"🎁 You already had your today's **Daily Role**.\n\n"
+"**⏰ Until:**\n"
+"🕒 **" $hours "** hours\n"
+"🕑 **" (printf "%.0f" $minutes) "** minutes\n"
+"🕐 **" $secs "** seconds\n\n"
+"📅 **Ready again:**\n"
 "**" $next "**\n\n"
-"🎮 Μόλις λήξει ο χρόνος, χρησιμοποίησε ξανά την εντολή **!daily**."
+"🎮 When time is up, use again the command, **!daily**."
 )
 "color" 16753920
 "footer" (sdict
-"text" "GameCentral Daily System"
+"text" "YourServerName Daily System"
 )
 )
 )}}
@@ -56,35 +56,35 @@ MIT
 {{else}}
 
 {{$common := cslice
-1524022878738059364
-1524023080475824271
-1524023154308157521
-1524023221421211741
-1524023289809338428
-1524023348672331806
-1524023419090243745
-1524023481556271185
-1524023542910423091
-1524023603191087316
+ROLE_ID
+ROLE_ID
+ROLE_ID
+ROLE_ID
+ROLE_ID
+ROLE_ID
+ROLE_ID
+ROLE_ID
+ROLE_ID
+ROLE_ID
 }}
 
 {{$rare := cslice
-1524023670962389012
-1524023731029151906
-1524023791053832366
-1524023863862886420
-1524023920326611144
-1524023979109515304
+ROLE_ID
+ROLE_ID
+ROLE_ID
+ROLE_ID
+ROLE_ID
+ROLE_ID
 }}
 
 {{$epic := cslice
-1396486705074405479
-1524024041932066866
-1524024101738385529
+ROLE_ID
+ROLE_ID
+ROLE_ID
 }}
 
 {{$legendary := cslice
-1524024171917480087
+ROLE_ID
 }}
 
 {{$pityKey := "gc_daily_pity"}}
@@ -141,7 +141,7 @@ MIT
 
 {{$trollChance := randInt 1 101}}
 
-{{$oldRole := "Κανένα Daily Role"}}
+{{$oldRole := "No Daily Role"}}
 
 {{$oldRoleDB := dbGet .User.ID "gc_last_daily_role"}}
 
@@ -155,6 +155,7 @@ MIT
 {{if le $trollChance 12}}
 
 {{$messages := cslice
+/*Change the messages as they are in Greek */
 "💀 Ο διανομέας των Daily Roles πήγε για καφέ. Ξαναπέρασε αύριο."
 "🎁 Άνοιξες το κουτί... ήταν άδειο."
 "🤡 Συγχαρητήρια! Κέρδισες... απολύτως τίποτα."
@@ -175,13 +176,13 @@ MIT
 "title" "💀 Daily Troll"
 "description" (joinStr ""
 (index $messages (randInt 0 (len $messages)))
-"\n\n🎭 Το προηγούμενο Daily Role σου ήταν:\n🏅 **"
+"\n\n🎭 Your previous Daily Role σου was:\n🏅 **"
 $oldRole
 "**"
 )
 "color" 15158332
 "footer" (sdict
-"text" "GameCentral Daily System"
+"text" "YourServerName Daily System"
 )
 )
 )}}
@@ -250,26 +251,26 @@ $oldRole
 .User.Mention
 )
 "embed" (cembed
-"title" "🎁 GameCentral Daily Role"
+"title" "🎁 YourServerName Daily Role"
 "description" (joinStr ""
-"Συγχαρητήρια "
+"Congrats "
 .User.Mention
 "! 🎮\n\n"
-"Σήμερα κέρδισες:\n"
+"Today you won:\n"
 "🏅 **"
 $roleName
 "**\n\n"
-"Σπανιότητα: "
+"Rarity: "
 $rarity
 "\n\n🔥 Daily Streak: **"
 $streak
-" ημέρες**"
+" days**"
 "\n\n"
-"⏰ Ξαναδοκίμασε αύριο!"
+"⏰ Try again tomorrow!"
 )
 "color" 3447003
 "footer" (sdict
-"text" "GameCentral Daily System"
+"text" "YourServerName Daily System"
 )
 )
 )}}

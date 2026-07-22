@@ -1,4 +1,4 @@
-/*
+{{/*
 ===========================================
 YAGPDB Advanced Daily Roles
 Version : 1.0.0
@@ -10,7 +10,7 @@ License:
 MIT
 
 ===========================================
-*/
+*/}}
 
 {{$cooldownKey := "gc_daily_cooldown"}}
 {{$cd := dbGet .User.ID $cooldownKey}}

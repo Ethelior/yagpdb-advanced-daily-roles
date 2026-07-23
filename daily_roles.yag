@@ -2,7 +2,7 @@
 ================================================
  YAGPDB Advanced Daily Roles
 
- Version: 1.0.0
+ Version: 1.1.0
 
  Created by: Ethelior
 
@@ -39,6 +39,40 @@
     "trollChance" 12
     "weekendBonus" 5
     "maxPityBonus" 5
+    "successColor" 3447003
+    "cooldownColor" 16753920
+    "trollColor" 15158332
+    "footerText" "YourServerName Daily System"
+    "titleReward" "🎁 YourServerName Daily Role"
+    "titleCooldown" "⏳ Daily Cooldown"
+    "titleTroll" "💀 Daily Troll"
+
+{{/* Greece TimeZone:
+☀️ Summer (end of March until end of October)
+Summer: Add 10800e9 (+3)
+❄️ Winter (end of October until end of March)
+Winter: Add 7200e9 (+2)
+*/}}
+
+    "timezoneOffset" 10800e9
+
+}}
+
+{{/* ======================================
+            TROLL MESSAGES
+====================================== */}}
+
+{{$trollMessages := cslice
+"💀 Ο διανομέας των Daily Roles πήγε για καφέ. Ξαναπέρασε αύριο."
+"🎁 Άνοιξες το κουτί... ήταν άδειο."
+"🤡 Συγχαρητήρια! Κέρδισες... απολύτως τίποτα."
+"🐌 Ο courier έχασε το role σου."
+"🪙 Έπεσε το νόμισμα... και έχασες."
+"👻 Το role εξαφανίστηκε πριν το πάρεις."
+"💣 Έπεσες σε Trap Card!"
+"🎰 Critical Miss!"
+"👑 Ο βασιλιάς κράτησε το role για τον εαυτό του."
+"🦝 Ένα ρακούν έκλεψε το κουτί σου."
 }}
 
 {{$cooldownKey := $config.cooldownKey}}
@@ -52,19 +86,13 @@
 {{$minutes := div (mod $seconds 3600) 60}}
 {{$secs := mod $seconds 60}}
 
-{{/* Greece TimeZone:
-☀️ Summer (end of March until end of October)
-Summer: Add 10800e9 (+3)
-❄️ Winter (end of October until end of March)
-Winter: Add 7200e9 (+2)
-*/}}
 
-{{$next := ($cd.ExpiresAt.Add 10800e9).Format "02/01/2006 στις 15:04:05"}}
+{{$next := ($cd.ExpiresAt.Add $config.timezoneOffset).Format "02/01/2006 στις 15:04:05"}}
 
 {{sendMessage nil (complexMessage
 "content" .User.Mention
 "embed" (cembed
-"title" "⏳ Daily Cooldown"
+"title" $config.titleCooldown
 "description" (joinStr ""
 "🎁 You already had your today's **Daily Role**.\n\n"
 "**⏰ Until:**\n"
@@ -75,36 +103,36 @@ Winter: Add 7200e9 (+2)
 "**" $next "**\n\n"
 "🎮 When time is up, use again the command, **!daily**."
 )
-"color" 16753920
+"color" $config.cooldownColor
 "footer" (sdict
-"text" "YourServerName Daily System"
+"text" $config.footerText
 )
 )
 )}}
 
 {{else}}
 
+{{/* ======================================
+              ROLE POOLS
+====================================== */}}
+
+{{/* ---------- COMMON ---------- */}}
+
 {{$common := cslice
-ROLE_ID
-ROLE_ID
-ROLE_ID
-ROLE_ID
-ROLE_ID
-ROLE_ID
-ROLE_ID
 ROLE_ID
 ROLE_ID
 ROLE_ID
 }}
 
+{{/* ---------- RARE ---------- */}}
+
 {{$rare := cslice
 ROLE_ID
 ROLE_ID
 ROLE_ID
-ROLE_ID
-ROLE_ID
-ROLE_ID
 }}
+
+{{/* ---------- EPIC ---------- */}}
 
 {{$epic := cslice
 ROLE_ID
@@ -112,11 +140,13 @@ ROLE_ID
 ROLE_ID
 }}
 
+{{/* ---------- LEGENDARY ---------- */}}
+
 {{$legendary := cslice
 ROLE_ID
 }}
 
-{{$pityKey := "gc_daily_pity"}}
+{{$pityKey := $config.pityKey}}
 {{$pityDB := dbGet .User.ID $pityKey}}
 
 {{$pity := 0}}
@@ -127,8 +157,8 @@ ROLE_ID
 
 {{$pityBonus := div (toInt $pity) 5}}
 
-{{if gt (toInt $pityBonus) 20}}
-    {{$pityBonus = 20}}
+{{if gt $pityBonus $config.maxPityBonus}}
+    {{$pityBonus = $config.maxPityBonus}}
 {{end}}
 
 
@@ -137,7 +167,7 @@ ROLE_ID
 {{$weekday := currentTime.Weekday}}
 
 {{if or (eq $weekday 5) (eq $weekday 6) (eq $weekday 0)}}
-{{$weekBonus = 5}}
+{{$weekBonus = $config.weekendBonus}}
 {{end}}
 
 {{$chance := randInt 1 (sub 101 $weekBonus)}}
@@ -145,17 +175,17 @@ ROLE_ID
 {{$pool := $common}}
 {{$rarity := "🟢 Common"}}
 
-{{if le $chance 60}}
+{{if le $chance $config.commonChance}}
 
 {{$pool = $common}}
 {{$rarity = "🟢 Common"}}
 
-{{else if le $chance 88}}
+{{else if le $chance $config.rareChance}}
 
 {{$pool = $rare}}
 {{$rarity = "🔵 Rare"}}
 
-{{else if le $chance (sub 98 $pityBonus)}}
+{{else if le $chance (sub $config.epicChance $pityBonus)}}
 
 {{$pool = $epic}}
 {{$rarity = "🟣 Epic"}}
@@ -174,7 +204,7 @@ ROLE_ID
 
 {{$oldRole := "No Daily Role"}}
 
-{{$oldRoleDB := dbGet .User.ID "gc_last_daily_role"}}
+{{$oldRoleDB := dbGet .User.ID $config.lastRoleKey}}
 
 {{if $oldRoleDB}}
     {{$r := getRole (toInt $oldRoleDB.Value)}}
@@ -185,35 +215,23 @@ ROLE_ID
 
 {{if le $trollChance $config.trollChance}}
 
-{{$messages := cslice
-/*Change the messages as they are in Greek */
-"💀 Ο διανομέας των Daily Roles πήγε για καφέ. Ξαναπέρασε αύριο."
-"🎁 Άνοιξες το κουτί... ήταν άδειο."
-"🤡 Συγχαρητήρια! Κέρδισες... απολύτως τίποτα."
-"🐌 Ο courier έχασε το role σου."
-"🪙 Έπεσε το νόμισμα... και έχασες."
-"👻 Το role εξαφανίστηκε πριν το πάρεις."
-"💣 Έπεσες σε Trap Card!"
-"🎰 Critical Miss!"
-"👑 Ο βασιλιάς κράτησε το role για τον εαυτό του."
-"🦝 Ένα ρακούν έκλεψε το κουτί σου."
-}}
+
 
 {{dbSetExpire .User.ID $cooldownKey true $config.cooldown}}
 
 {{sendMessage nil (complexMessage
 "content" .User.Mention
 "embed" (cembed
-"title" "💀 Daily Troll"
+"title" $config.titleTroll
 "description" (joinStr ""
-(index $messages (randInt 0 (len $messages)))
+(index $trollMessages (randInt 0 (len $trollMessages)))
 "\n\n🎭 Your previous Daily Role σου was:\n🏅 **"
 $oldRole
 "**"
 )
-"color" 15158332
+"color" $config.trollColor
 "footer" (sdict
-"text" "YourServerName Daily System"
+"text" $config.footerText
 )
 )
 )}}
@@ -256,9 +274,9 @@ $oldRole
 
 {{addRoleID $newRole}}
 
-{{dbSet .User.ID "gc_last_daily_role" $newRole}}
+{{dbSet .User.ID $config.lastRoleKey $newRole}}
 
-{{$streakKey := "gc_daily_streak"}}
+{{$streakKey := $config.streakKey}}
 {{$streakDB := dbGet .User.ID $streakKey}}
 
 {{$streak := 0}}
@@ -271,7 +289,7 @@ $oldRole
 
 {{dbSet .User.ID $streakKey $streak}}
 
-{{dbSetExpire .User.ID $cooldownKey true 86400}}
+{{dbSetExpire .User.ID $cooldownKey true $config.cooldown}}
 
 
 {{$roleName := (getRole $newRole).Name}}
@@ -282,7 +300,7 @@ $oldRole
 .User.Mention
 )
 "embed" (cembed
-"title" "🎁 YourServerName Daily Role"
+"title" $config.titleReward
 "description" (joinStr ""
 "Congrats "
 .User.Mention
@@ -299,9 +317,9 @@ $streak
 "\n\n"
 "⏰ Try again tomorrow!"
 )
-"color" 3447003
+"color" $config.successColor
 "footer" (sdict
-"text" "YourServerName Daily System"
+"text" $config.footerText
 )
 )
 )}}

@@ -103,7 +103,9 @@ ROLE_ID
 {{$pity = $pityDB.Value}}
 {{end}}
 
-{{$pityBonus := div $pity 5}}
+{{if gt (toInt $pityBonus) 20}}
+    {{$pityBonus = 20}}
+{{end}}
 
 
 {{$weekBonus := 0}}

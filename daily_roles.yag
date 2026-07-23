@@ -128,23 +128,21 @@ ROLE_ID
 {{$pool = $common}}
 {{$rarity = "🟢 Common"}}
 
-{{else if le $chance (add 88 $pityBonus)}}
+{{else if le $chance 88}}
 
 {{$pool = $rare}}
 {{$rarity = "🔵 Rare"}}
 
-{{else if le $chance (add 98 $pityBonus)}}
+{{else if le $chance (sub 98 $pityBonus)}}
 
 {{$pool = $epic}}
 {{$rarity = "🟣 Epic"}}
-
 {{dbSet .User.ID $pityKey 0}}
 
 {{else}}
 
 {{$pool = $legendary}}
 {{$rarity = "🟡 Legendary"}}
-
 {{dbSet .User.ID $pityKey 0}}
 
 {{end}}

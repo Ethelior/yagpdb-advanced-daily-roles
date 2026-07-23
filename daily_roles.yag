@@ -19,7 +19,29 @@
 ================================================
 */}}
 
-{{$cooldownKey := "gc_daily_cooldown"}}
+
+{{/* ======================================
+                CONFIG
+====================================== */}}
+
+{{$config := sdict
+    "cooldownKey" "gc_daily_cooldown"
+    "pityKey" "gc_daily_pity"
+    "streakKey" "gc_daily_streak"
+    "lastRoleKey" "gc_last_daily_role"
+
+    "cooldown" 86400
+
+    "commonChance" 60
+    "rareChance" 88
+    "epicChance" 98
+
+    "trollChance" 12
+    "weekendBonus" 5
+    "maxPityBonus" 5
+}}
+
+{{$cooldownKey := $config.cooldownKey}}
 {{$cd := dbGet .User.ID $cooldownKey}}
 
 {{if $cd}}
@@ -161,7 +183,7 @@ ROLE_ID
     {{end}}
 {{end}}
 
-{{if le $trollChance 12}}
+{{if le $trollChance $config.trollChance}}
 
 {{$messages := cslice
 /*Change the messages as they are in Greek */
@@ -177,7 +199,7 @@ ROLE_ID
 "🦝 Ένα ρακούν έκλεψε το κουτί σου."
 }}
 
-{{dbSetExpire .User.ID $cooldownKey true 86400}}
+{{dbSetExpire .User.ID $cooldownKey true $config.cooldown}}
 
 {{sendMessage nil (complexMessage
 "content" .User.Mention

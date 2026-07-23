@@ -1,67 +1,57 @@
-# Changelog
+📜 Changelog
 
 All notable changes to this project will be documented in this file.
 
-The format is inspired by Keep a Changelog and follows Semantic Versioning (SemVer).
+This project follows Semantic Versioning (SemVer).
 
 ---
 
-[v1.1.0] - 2026-07-23
+🚀 v1.1.0 — Advanced Customization Update
 
-Added
+✨ Added
 
-- Config section for easier customization.
-- Configurable cooldown duration.
-- Configurable rarity percentages.
-- Configurable troll event chance.
-- Configurable weekend bonus.
-- Configurable pity bonus limit.
-- Configurable embed colors.
-- Configurable embed titles.
-- Configurable footer text.
-- Configurable timezone offset.
-- Daily Streak system.
-- Pity System.
-- Weekend rarity bonus.
-- Troll events with random messages.
-- Previous Daily Role tracking and display during troll events.
+- ⚙️ Introduced a centralized Configuration Section for easier customization.
+- 🎯 Added configurable rarity percentages.
+- 🎭 Added configurable troll event chance.
+- 📅 Added configurable weekend rarity bonus.
+- 🍀 Added configurable Pity System.
+- 🔥 Added Daily Streak system.
+- 🏅 Added previous Daily Role tracking.
+- 💀 Troll events now display the player's previous Daily Role.
+- 🎨 Added configurable embed colors.
+- 📝 Added configurable embed titles.
+- 📌 Added configurable footer text.
+- 🌍 Added configurable timezone offset.
+- 💬 Moved troll messages into a dedicated configuration block.
 
-Changed
+🔄 Changed
 
-- Improved project structure and readability.
-- Organized role pools into dedicated sections.
-- Moved troll messages into a dedicated configuration block.
-- Reduced duplicated values throughout the code.
-- Improved overall customization experience.
+- 🧹 Reorganized the entire code for better readability.
+- 📂 Separated configuration, role pools and troll messages into dedicated sections.
+- ♻️ Reduced duplicated values by using centralized configuration variables.
+- 📖 Improved documentation and project structure.
+- 🛠️ Simplified server setup and customization.
 
-Fixed
+🐛 Fixed
 
-- Fixed previous Daily Role lookup.
-- Fixed pity bonus comparison issues.
-- Fixed various template errors and stability issues.
-
----
-
-[v1.0.0] - 2026-07-22
-
-Initial Release
-
-- Daily Role reward system.
-- Common, Rare, Epic and Legendary rarity pools.
-- Daily cooldown.
-- Automatic removal of previous Daily Roles.
-- Rich embed responses.
-- MIT License.
-- README documentation.
+- ✅ Fixed previous Daily Role detection.
+- ✅ Fixed Pity System calculations.
+- ✅ Fixed template comparison issues.
+- ✅ Fixed various stability and template execution errors.
 
 ---
 
-## Future Updates
+🎉 v1.0.0 — Initial Release
 
-### Planned
+✨ Features
 
-- Statistics tracking
-- Admin configuration commands
-- Multi-language support
-- Seasonal rewards
-- More event types
+- 🎁 Daily Role reward system.
+- 🟢 Common rarity.
+- 🔵 Rare rarity.
+- 🟣 Epic rarity.
+- 🟡 Legendary rarity.
+- ⏳ 24-hour cooldown system.
+- 🔄 Automatic removal of previous Daily Roles.
+- 💬 Rich embed responses.
+- 📚 README documentation.
+- ⚖️ MIT License.

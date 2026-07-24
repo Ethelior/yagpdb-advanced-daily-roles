@@ -88,13 +88,6 @@ Default rarity chances:
 - [x] Pity system
 - [x] Daily streaks
 
-Future:
-
-- [ ] Statistics system
-- [ ] Admin configuration commands
-- [ ] Multi-language support
-- [ ] Seasonal events
-
 ---
 
 ## 📜 License

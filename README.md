@@ -75,8 +75,10 @@ Default rarity chances:
 |---|---|
 | 🟢 Common | 60% |
 | 🔵 Rare | 28% |
-| 🟣 Epic | 10% |
-| 🟡 Legendary | 2% |
+| 🟣 Epic | 10%* |
+| 🟡 Legendary | 2%* |
+
+\* Epic and Legendary chances are dynamically affected by the built-in Pity System and Weekend Bonus. */
 
 ---
 
